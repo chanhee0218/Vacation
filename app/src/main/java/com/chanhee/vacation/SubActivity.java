@@ -1,80 +1,82 @@
 package com.chanhee.vacation;
 
-
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import android.widget.ListView;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SubActivity extends AppCompatActivity {
-    TextView textView;
+    private List<String> list;
+    private ListView listView;
+    private EditText editSearch;
+    private SearchAdapter searchAdapter;
+    private ArrayList<String> arrayList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         setContentView(R.layout.activity_sub);
+        editSearch = (EditText) findViewById(R.id.edittxt);
+        listView=(ListView)findViewById(R.id.listview);
+        list=new ArrayList<String>();
+        settingList();
+        arrayList= new ArrayList<String>();
+        arrayList.addAll(list);
+        searchAdapter=new SearchAdapter(list,this);
+        listView.setAdapter(searchAdapter);
+        editSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            String text=editSearch.getText().toString();
+            search(text);
+            }
+
+            private void search(String text) {
+                list.clear();
+                if(text.length()==0){
+                    list.addAll(arrayList);
+
+                }else
+                {
+                    for(int i=0;i<arrayList.size();i++){
+                        if(arrayList.get(i).toLowerCase().contains(text));
+                        {
+                            list.add(arrayList.get(i));
+                        }
+                    }
+                }
+                searchAdapter.notifyDataSetChanged();
+            }
+        });
     }
+    private void settingList() {
+        list.add("1.분노의 질주: 홉스&쇼");
+        list.add("2.엑시트");
+        list.add("3.봉오동 전투");
+        list.add("4. 마이펫의 이중생활 2");
+        list.add("5.안녕, 티라노: 영원히, 함께");
+        list.add("6.암전");
+        list.add("7.원더랜드");
+        list.add("8.레드슈즈");
+        list.add("9.알라딘");
+        list.add("10. 김복동");
 
-    private class GetXmlData extends AsyncTask<String, Void, Document> {
-
-        @Override
-        protected Document doInBackground(String... strings) {
-            URL url;
-            Document doc = null;
-            try {
-                url = new URL("https://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.xml?key=430156241533f1d058c603178cc3ca0e&targetDt=20190806");
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                doc = db.parse(new InputSource(url.openStream()));
-                doc.getDocumentElement().normalize();
-
-            } catch (MalformedURLException e) {
-                Toast.makeText(getBaseContext(), "파싱 오류", Toast.LENGTH_LONG).show();
-
-            } catch (ParserConfigurationException e) {
-                e.printStackTrace();
-            } catch (SAXException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return doc;
-        }
-
-        @Override
-        protected void onPostExecute(Document document) {
-            String s = "";
-            NodeList nodeList = document.getElementsByTagName("item");
-            for(int i = 0; i< nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                Element fstElmnt = (Element) node;
-                NodeList rnum = fstElmnt.getElementsByTagName("rnum");
-                s += "rnum = " + rnum.item(0).getChildNodes().item(0).getNodeValue() + "\n";
-
-                NodeList movieNm = fstElmnt.getElementsByTagName("movieNm");
-                s += "movieNm = " + movieNm.item(0).getChildNodes().item(0).getNodeValue() + "\n";
-            }
-            textView.setText("rnum");
-            textView.setText("movieNm");
-            super.onPostExecute(document);
-        }
     }
 }
+

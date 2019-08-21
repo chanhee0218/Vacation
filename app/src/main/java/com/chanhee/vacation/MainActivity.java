@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private AppCompatActivity mActivity;
     boolean askPermissionOnceAgain = false;
     boolean mRequestingLocationUpdates = false;
-    Location mCurrentLocatiion;
+    Location mCurrentLocation;
     boolean mMoveMapByUser = true;
     boolean mMoveMapByAPI = true;
     LatLng currentPosition;
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onCameraMoveStarted(int i) {
 
-                if (mMoveMapByUser == true && mRequestingLocationUpdates){
+                if (mMoveMapByUser && mRequestingLocationUpdates){
                     Log.d(TAG, "onCameraMove : 위치에 따른 카메라 이동 비활성화");
                     mMoveMapByAPI = false;
                 }
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 + " 경도:" + String.valueOf(location.getLongitude());
 
         setCurrentLocation(location, markerTitle, markerSnippet);
-        mCurrentLocatiion = location;
+        mCurrentLocation = location;
     }
 
 
@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed");
         setDefaultLocation();
     }
@@ -364,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Manifest.permission.ACCESS_FINE_LOCATION);
         if (hasFineLocationPermission == PackageManager
                 .PERMISSION_DENIED && fineLocationRationale)
-            showDialogForPermission("앱을 실행하려면 퍼미션을 허가하셔야합니다.");
+            showDialogForPermission();
         else if (hasFineLocationPermission
                 == PackageManager.PERMISSION_DENIED) {
             showDialogForPermissionSetting("퍼미션 거부 + Don't ask again(다시 묻지 않음) " +
@@ -400,11 +400,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void showDialogForPermission(String msg) {
+    private void showDialogForPermission() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("알림");
-        builder.setMessage(msg);
+        builder.setMessage("앱을 실행하려면 퍼미션을 허가하셔야합니다.");
         builder.setCancelable(false);
         builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -552,7 +552,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .listener(MainActivity.this)
                 .key("AIzaSyCNJ88mZEVems_Fp74tETd5nCeGJ6bV3JU")
                 .latlng(location.latitude, location.longitude)
-                .radius(500)
+                .radius(3500)
                 .type(PlaceType.MOVIE_THEATER)
                 .build()
                 .execute();
