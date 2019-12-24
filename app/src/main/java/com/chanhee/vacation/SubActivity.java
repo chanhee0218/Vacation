@@ -1,6 +1,10 @@
 package com.chanhee.vacation;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.DocumentsContract.Document;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
@@ -17,6 +21,7 @@ public class SubActivity extends AppCompatActivity {
     private EditText editSearch;
     private SearchAdapter searchAdapter;
     private ArrayList<String> arrayList;
+    private XMLparser xmLparser;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -30,6 +35,8 @@ public class SubActivity extends AppCompatActivity {
         arrayList.addAll(list);
         searchAdapter=new SearchAdapter(list,this);
         listView.setAdapter(searchAdapter);
+        xmLparser.getMoviename();
+        xmLparser.getRanking();
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -66,16 +73,7 @@ public class SubActivity extends AppCompatActivity {
         });
     }
     private void settingList() {
-        list.add("1.분노의 질주: 홉스&쇼");
-        list.add("2.엑시트");
-        list.add("3.봉오동 전투");
-        list.add("4. 마이펫의 이중생활 2");
-        list.add("5.안녕, 티라노: 영원히, 함께");
-        list.add("6.암전");
-        list.add("7.원더랜드");
-        list.add("8.레드슈즈");
-        list.add("9.알라딘");
-        list.add("10. 김복동");
+
 
     }
 }
